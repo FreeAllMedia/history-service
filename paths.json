@@ -1,0 +1,26 @@
+{
+	"source": {
+		"lib": "./es6/lib/**/*.js",
+    	"features": "./es6/features/**/*.js",
+		"spec": "./es6/spec/**/*.spec.js",
+		"specAssets": [
+			"./es6/spec/**/*.json"
+		],
+		"libAssets": [
+			"./es6/lib/**/*.json"
+		]
+	},
+
+	"build": {
+		"directories": {
+			"lib": "./es5/lib",
+			"spec": "./es5/spec",
+			"features": "./es5/features"
+		},
+		"features": "./features/**/*.feature",
+		"lib": "./es5/lib/**/*.js",
+    	"featureSteps": "./es5/features/steps/**/*.js",
+		"featureSupport": "./es5/features/support/**/*.js",
+		"spec": "./es5/spec/**/*.spec.js"
+	}
+}
