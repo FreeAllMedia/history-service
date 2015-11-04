@@ -1,5 +1,7 @@
 import EventRouter from "./routers/eventRouter.js";
 import privateData from "incognito";
+import kue from "kue";
+import Redis from "ioredis";
 
 const callExternalMethod = Symbol();
 
@@ -13,8 +15,19 @@ export default class HistoryService {
 	 *
 	 * @constructor
 	 */
-	constructor() {
-		privateData(this).router = new EventRouter();
+	constructor(options = {}) {
+		const _ = privateData(this);
+
+		_.options = options;
+		_.redis = _.options.redis || new Redis();
+		_.router = new EventRouter(this);
+		_.queue = kue.createQueue({
+			redis: {
+				createClientFactory: function(){
+					return _.redis;
+				}
+			}
+		});
 	}
 
 	/**
@@ -36,6 +49,20 @@ export default class HistoryService {
 	 */
 	close(callback) {
 		this[callExternalMethod]("./historyService/close.js", callback);
+	}
+
+	/**
+	 * Returns the task queue for the service
+	 *
+	 * @property queue
+	 * @return {Queue} The task queue object
+	 */
+	get queue() {
+		return privateData(this).queue;
+	}
+
+	get redis() {
+		return privateData(this).redis;
 	}
 
 	/**

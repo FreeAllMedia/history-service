@@ -1,4 +1,4 @@
-import HistoryService from "../lib/";
+import HistoryService from "../../lib/";
 import Request from "appeal";
 
 describe(".listen(portNumber, callback)", () => {
@@ -6,12 +6,13 @@ describe(".listen(portNumber, callback)", () => {
         const historyService = new HistoryService();
 
         historyService.listen(8045, () => {
-            Request
+			Request
                 .get
                 .url("http://localhost:8045")
-                .results((error) => {
-                    error.message.should.not.eql("connect ECONNREFUSED 127.0.0.1:8045");
-                    done();
+                .results((error, response) => {
+					response.body.should.eql("Cannot GET /\n");
+
+					historyService.close(done);
                 });
         });
     });

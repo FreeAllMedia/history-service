@@ -18,6 +18,14 @@ var _incognito = require("incognito");
 
 var _incognito2 = _interopRequireDefault(_incognito);
 
+var _kue = require("kue");
+
+var _kue2 = _interopRequireDefault(_kue);
+
+var _ioredis = require("ioredis");
+
+var _ioredis2 = _interopRequireDefault(_ioredis);
+
 var callExternalMethod = Symbol();
 
 /**
@@ -33,9 +41,22 @@ var HistoryService = (function () {
   */
 
 	function HistoryService() {
+		var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 		_classCallCheck(this, HistoryService);
 
-		(0, _incognito2["default"])(this).router = new _routersEventRouterJs2["default"]();
+		var _ = (0, _incognito2["default"])(this);
+
+		_.options = options;
+		_.redis = _.options.redis || new _ioredis2["default"]();
+		_.router = new _routersEventRouterJs2["default"](this);
+		_.queue = _kue2["default"].createQueue({
+			redis: {
+				createClientFactory: function createClientFactory() {
+					return _.redis;
+				}
+			}
+		});
 	}
 
 	/**
@@ -65,6 +86,15 @@ var HistoryService = (function () {
 		}
 
 		/**
+   * Returns the task queue for the service
+   *
+   * @property queue
+   * @return {Queue} The task queue object
+   */
+	}, {
+		key: callExternalMethod,
+
+		/**
    * Call an external method with `this` as the context.
    *
    * @method callExternalMethod
@@ -72,8 +102,6 @@ var HistoryService = (function () {
    * @param  {*}		...methodArguments 	Any arguments that are to be passed to the external method
    * @private
    */
-	}, {
-		key: callExternalMethod,
 		value: function value(filePath) {
 			var _require;
 
@@ -82,6 +110,16 @@ var HistoryService = (function () {
 			}
 
 			(_require = require(filePath)).call.apply(_require, [this].concat(methodArguments));
+		}
+	}, {
+		key: "queue",
+		get: function get() {
+			return (0, _incognito2["default"])(this).queue;
+		}
+	}, {
+		key: "redis",
+		get: function get() {
+			return (0, _incognito2["default"])(this).redis;
 		}
 	}]);
 

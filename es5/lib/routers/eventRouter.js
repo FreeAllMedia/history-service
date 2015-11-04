@@ -33,8 +33,8 @@ var EventRouter = (function (_Router) {
 
     _createClass(EventRouter, [{
         key: "initialize",
-        value: function initialize() {
-            var eventController = new _controllersEventControllerJs2["default"]();
+        value: function initialize(service) {
+            var eventController = new _controllersEventControllerJs2["default"](service);
 
             this.post("/events", eventController.create);
         }

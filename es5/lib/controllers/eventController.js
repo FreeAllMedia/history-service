@@ -18,6 +18,16 @@ var _forbin = require("forbin");
 
 var _forbin2 = _interopRequireDefault(_forbin);
 
+var _incognito = require("incognito");
+
+var _incognito2 = _interopRequireDefault(_incognito);
+
+/**
+ * Controls requests for events
+ *
+ * @class EventController
+ */
+
 var EventController = (function (_Controller) {
     _inherits(EventController, _Controller);
 
@@ -28,7 +38,18 @@ var EventController = (function (_Controller) {
     }
 
     _createClass(EventController, [{
-        key: "create",
+        key: "initialize",
+
+        /**
+         * Initialize the event controller by passing the history service object to it.
+         *
+         * @constructor
+         * @method initialize
+         * @param  {HistoryService} service The service that the controller works for.
+         */
+        value: function initialize(service) {
+            (0, _incognito2["default"])(this).service = service;
+        }
 
         /**
          * Insert a "Create Event" task into the tasks queue
@@ -37,7 +58,13 @@ var EventController = (function (_Controller) {
          * @param  {Request} request  The request sent in
          * @param  {Response} response A promise to respond with
          */
+    }, {
+        key: "create",
         value: function create(request, response) {
+            var queue = (0, _incognito2["default"])(this).service.queue;
+
+            queue.create("createEvent", request.body).save();
+
             response.ok();
         }
     }]);

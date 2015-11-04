@@ -9,11 +9,19 @@ exports["default"] = EventControllerShowSteps;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+var _sinon = require("sinon");
+
+var _sinon2 = _interopRequireDefault(_sinon);
+
 var _appeal = require("appeal");
 
 var _appeal2 = _interopRequireDefault(_appeal);
 
 function EventControllerShowSteps() {
+
+	/**
+  * WHEN
+  */
 
 	this.When(/^a valid create event request is received$/, function (callback) {
 		var _this = this;
@@ -56,6 +64,17 @@ function EventControllerShowSteps() {
 	this.When(/^the body is not valid json$/, function (callback) {
 		// Write code here that turns the phrase above into concrete actions
 		callback.pending();
+	});
+
+	/**
+  * THEN
+  */
+
+	this.Then(/^add a create event task to the task queue$/, function (callback) {
+		this.service.queue.inactiveCount(function (err, total) {
+			total.should.equal(1);
+			callback();
+		});
 	});
 }
 

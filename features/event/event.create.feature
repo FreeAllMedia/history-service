@@ -1,8 +1,9 @@
 Feature: create a new event
 
-  Scenario: a create event request is received; return status code "ok"
+  Scenario: a create event request is received; create an event task, then return status code "ok"
     When a valid create event request is received
-    Then respond with a blank body
+    Then add a create event task to the task queue
+      And respond with a blank body
       And http status code "ok"
 
   # Scenario: a create event request is received without designating json as the content type; return status code "bad request"

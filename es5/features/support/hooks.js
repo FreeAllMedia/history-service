@@ -12,27 +12,32 @@ var _lib = require("../../lib/");
 
 var _lib2 = _interopRequireDefault(_lib);
 
-function hooks() {
-	var service = undefined,
-	    portNumber = 1338;
+var _redisJs = require("redis-js");
 
-	/* Called once before all features are run */
-	this.BeforeFeatures(function (scenario, callback) {
-		service = new _lib2["default"]();
-		service.listen(portNumber, function () {
+var _redisJs2 = _interopRequireDefault(_redisJs);
+
+function hooks() {
+	/* Called before each scenario */
+	this.Before(function (event, callback) {
+		var portNumber = 1338;
+
+		this.url = "http://localhost:" + portNumber;
+
+		var mockRedisClient = _redisJs2["default"].createClient();
+
+		this.service = new _lib2["default"]({
+			redis: mockRedisClient
+		});
+
+		this.service.listen(portNumber, function () {
 			process.stdout.write("\nTest service for features listening on port " + portNumber + "\n");
 			callback();
 		});
 	});
 
-	/* Called before each scenario */
-	this.Before(function () {
-		this.url = "http://localhost:" + portNumber;
-	});
-
 	/* Called after all features are run */
-	this.AfterFeatures(function (scenario, callback) {
-		service.close(function () {
+	this.After(function (event, callback) {
+		this.service.close(function () {
 			process.stdout.write("\nTest service closed.\n");
 			callback();
 		});
