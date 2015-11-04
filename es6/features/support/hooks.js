@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 import HistoryService from "../../lib/";
-import mockRedis from "redis-js";
+import mockRedis from "redis-js"; // Sounds like actual Redis client, but is actually a mock library
 
 export default function hooks() {
 	/* Called before each scenario */
@@ -9,10 +9,17 @@ export default function hooks() {
 
 		this.url = `http:\/\/localhost:${portNumber}`;
 
-		const mockRedisClient = mockRedis.createClient();
+		/**
+		 * WARNING
+		 *
+		 * This mockRedis library (`redis-js`) will return a client that is always
+		 * connected to the same database. So, you will need to clear all keys from
+		 * the mockRedis database in order to ensure that no tests contaminate the others.
+		 */
+		this.mockRedisClient = mockRedis.createClient();
 
 		this.service = new HistoryService({
-			redis: mockRedisClient
+			redis: this.mockRedisClient
 		});
 
 		this.service.listen(portNumber, () => {
@@ -25,7 +32,12 @@ export default function hooks() {
 	this.After(function (event, callback) {
 		this.service.close(() => {
 			process.stdout.write(`\nTest service closed.\n`);
-			callback();
+
+			this.mockRedisClient.flushall(() => {
+				process.stdout.write(`\nMock redis database flushed.\n`);
+
+				callback();
+			});
 		});
 	});
 }

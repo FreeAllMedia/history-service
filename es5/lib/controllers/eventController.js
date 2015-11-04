@@ -63,9 +63,9 @@ var EventController = (function (_Controller) {
         value: function create(request, response) {
             var queue = (0, _incognito2["default"])(this).service.queue;
 
-            queue.create("createEvent", request.body).save();
-
-            response.ok();
+            queue.create("createEvent", request.body).save(function () {
+                response.ok();
+            });
         }
     }]);
 

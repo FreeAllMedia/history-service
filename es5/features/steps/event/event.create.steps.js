@@ -71,7 +71,7 @@ function EventControllerShowSteps() {
   */
 
 	this.Then(/^add a create event task to the task queue$/, function (callback) {
-		this.service.queue.inactiveCount(function (err, total) {
+		this.service.queue.inactiveCount(function (error, total) {
 			total.should.equal(1);
 			callback();
 		});

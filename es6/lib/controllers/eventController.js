@@ -30,8 +30,8 @@ export default class EventController extends Controller {
 
         queue
             .create("createEvent", request.body)
-            .save();
-
-        response.ok();
+            .save(() => {
+                response.ok();
+            });
     }
 }

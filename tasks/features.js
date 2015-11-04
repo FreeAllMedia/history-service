@@ -10,7 +10,11 @@ gulp.task("features", ["build"], cb => {
     .on("finish", () => {
       gulp.src(paths.build.features)
         .pipe(
-          cucumber({steps: paths.build.featureSteps, support: paths.build.featureSupport})
+          cucumber({
+              steps: paths.build.featureSteps,
+              support: paths.build.featureSupport,
+              format: "pretty"
+          })
         ).on("error", function log(error) {
           process.stdout.write(error.message);
           this.emit("end");

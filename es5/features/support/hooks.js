@@ -16,6 +16,8 @@ var _redisJs = require("redis-js");
 
 var _redisJs2 = _interopRequireDefault(_redisJs);
 
+// Sounds like actual Redis client, but is actually a mock library
+
 function hooks() {
 	/* Called before each scenario */
 	this.Before(function (event, callback) {
@@ -23,10 +25,17 @@ function hooks() {
 
 		this.url = "http://localhost:" + portNumber;
 
-		var mockRedisClient = _redisJs2["default"].createClient();
+		/**
+   * WARNING
+   *
+   * This mockRedis library (`redis-js`) will return a client that is always
+   * connected to the same database. So, you will need to clear all keys from
+   * the mockRedis database in order to ensure that no tests contaminate the others.
+   */
+		this.mockRedisClient = _redisJs2["default"].createClient();
 
 		this.service = new _lib2["default"]({
-			redis: mockRedisClient
+			redis: this.mockRedisClient
 		});
 
 		this.service.listen(portNumber, function () {
@@ -37,9 +46,16 @@ function hooks() {
 
 	/* Called after all features are run */
 	this.After(function (event, callback) {
+		var _this = this;
+
 		this.service.close(function () {
 			process.stdout.write("\nTest service closed.\n");
-			callback();
+
+			_this.mockRedisClient.flushall(function () {
+				process.stdout.write("\nMock redis database flushed.\n");
+
+				callback();
+			});
 		});
 	});
 }
