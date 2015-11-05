@@ -1,6 +1,7 @@
 import HistoryService from "../../lib/";
 
-describe(".constructor", () => {
+describe("options.credentials", () => {
+    /* eslint-disable no-unused-vars */
     let historyService;
 
     describe("(when both options.credentials.redis and options.redis are not set)", () => {

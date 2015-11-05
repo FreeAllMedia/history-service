@@ -6,7 +6,8 @@ var _lib = require("../../lib/");
 
 var _lib2 = _interopRequireDefault(_lib);
 
-describe(".constructor", function () {
+describe("options.credentials", function () {
+    /* eslint-disable no-unused-vars */
     var historyService = undefined;
 
     describe("(when both options.credentials.redis and options.redis are not set)", function () {
