@@ -10,11 +10,15 @@ var _kue = require("kue");
 
 var _kue2 = _interopRequireDefault(_kue);
 
+var _credentialsJson = require("../credentials.json");
+
+var _credentialsJson2 = _interopRequireDefault(_credentialsJson);
+
 var Queue = _kue2["default"].createQueue().constructor;
 
 describe(".queue", function () {
     it("should return an instance of a `kue` queue", function () {
-        var historyService = new _lib2["default"]();
+        var historyService = new _lib2["default"]({ credentials: _credentialsJson2["default"] });
 
         historyService.queue.should.be.instanceOf(Queue);
     });

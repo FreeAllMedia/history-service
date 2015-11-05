@@ -15,7 +15,8 @@ describe("options.redis", function () {
         };
 
         var options = {
-            redis: new MockRedis()
+            redis: new MockRedis(),
+            dynamodb: {}
         };
 
         var historyService = new _lib2["default"](options);

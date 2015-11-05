@@ -5,7 +5,8 @@ describe("options.redis", () => {
         class MockRedis {}
 
         const options = {
-            redis: new MockRedis()
+            redis: new MockRedis(),
+            dynamodb: {}
         };
 
         const historyService = new HistoryService(options);

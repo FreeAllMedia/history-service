@@ -26,7 +26,13 @@ var _ioredis = require("ioredis");
 
 var _ioredis2 = _interopRequireDefault(_ioredis);
 
-var callExternalMethod = Symbol();
+var _blunder = require("blunder");
+
+var _blunder2 = _interopRequireDefault(_blunder);
+
+var validateOptions = Symbol(),
+    callExternalMethod = Symbol(),
+    startProcessors = Symbol();
 
 /**
  * @class HistoryService
@@ -47,9 +53,12 @@ var HistoryService = (function () {
 
 		var _ = (0, _incognito2["default"])(this);
 
-		_.options = options;
-		_.redis = _.options.redis || new _ioredis2["default"]();
+		this[validateOptions](options);
+
+		_.redis = _.options.redis || new _ioredis2["default"](_.options.credentials.redis);
 		_.router = new _routersEventRouterJs2["default"](this);
+		//_.dynamodb = dynamodb.createClient(_.options.credentials.dynamodb);
+
 		_.queue = _kue2["default"].createQueue({
 			redis: {
 				createClientFactory: function createClientFactory() {
@@ -70,6 +79,7 @@ var HistoryService = (function () {
 	_createClass(HistoryService, [{
 		key: "listen",
 		value: function listen(portNumber, callback) {
+			this[startProcessors]();
 			this[callExternalMethod]("./historyService/listen.js", portNumber, callback);
 		}
 
@@ -92,7 +102,28 @@ var HistoryService = (function () {
    * @return {Queue} The task queue object
    */
 	}, {
-		key: callExternalMethod,
+		key: validateOptions,
+		value: function value(options) {
+			var _ = (0, _incognito2["default"])(this);
+
+			options.credentials = options.credentials || {};
+
+			var errors = [];
+
+			if (!options.redis && !options.credentials.redis) {
+				errors.push(new Error("A Redis client or credentials are required."));
+			}
+
+			if (!options.dynamodb && !options.credentials.dynamodb) {
+				errors.push(new Error("A DynamoDB client or credentials are required."));
+			}
+
+			if (errors.length > 0) {
+				throw new _blunder2["default"](errors);
+			}
+
+			_.options = options;
+		}
 
 		/**
    * Call an external method with `this` as the context.
@@ -102,6 +133,8 @@ var HistoryService = (function () {
    * @param  {*}		...methodArguments 	Any arguments that are to be passed to the external method
    * @private
    */
+	}, {
+		key: callExternalMethod,
 		value: function value(filePath) {
 			var _require;
 
@@ -111,11 +144,31 @@ var HistoryService = (function () {
 
 			(_require = require(filePath)).call.apply(_require, [this].concat(methodArguments));
 		}
+
+		/**
+   * Start processing jobs in the Queue
+   *
+   * @method startProcessors
+   * @private
+   */
+	}, {
+		key: startProcessors,
+		value: function value() {
+			var queue = (0, _incognito2["default"])(this).queue;
+			queue.process("createEvent", require("./processors/processCreateEvent.js"));
+		}
 	}, {
 		key: "queue",
 		get: function get() {
 			return (0, _incognito2["default"])(this).queue;
 		}
+
+		/**
+   * Return the redis client in use
+   *
+   * @property redis
+   * @return {RedisClient} The redis client in use
+   */
 	}, {
 		key: "redis",
 		get: function get() {
