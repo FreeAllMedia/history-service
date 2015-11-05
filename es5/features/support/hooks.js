@@ -18,6 +18,10 @@ var _redisJs2 = _interopRequireDefault(_redisJs);
 
 // Sounds like actual Redis client, but is actually a mock library
 
+var _environmentsJson = require("../../../environments.json");
+
+var _environmentsJson2 = _interopRequireDefault(_environmentsJson);
+
 function hooks() {
 	/* Called before each scenario */
 	this.Before(function (event, callback) {
@@ -35,7 +39,8 @@ function hooks() {
 		this.mockRedisClient = _redisJs2["default"].createClient();
 
 		this.service = new _lib2["default"]({
-			redis: this.mockRedisClient
+			redis: this.mockRedisClient,
+			dynamodb: {}
 		});
 
 		this.service.listen(portNumber, function () {

@@ -30,6 +30,10 @@ var _blunder = require("blunder");
 
 var _blunder2 = _interopRequireDefault(_blunder);
 
+var _dynamoClient = require("dynamo-client");
+
+var _dynamoClient2 = _interopRequireDefault(_dynamoClient);
+
 var validateOptions = Symbol(),
     callExternalMethod = Symbol(),
     startProcessors = Symbol();
@@ -57,7 +61,7 @@ var HistoryService = (function () {
 
 		_.redis = _.options.redis || new _ioredis2["default"](_.options.credentials.redis);
 		_.router = new _routersEventRouterJs2["default"](this);
-		//_.dynamodb = dynamodb.createClient(_.options.credentials.dynamodb);
+		_.dynamodb = _.options.dynamodb || _dynamoClient2["default"].createClient(_.options.credentials.dynamodb);
 
 		_.queue = _kue2["default"].createQueue({
 			redis: {
@@ -103,6 +107,14 @@ var HistoryService = (function () {
    */
 	}, {
 		key: validateOptions,
+
+		/**
+   * Validates that all options are set correctly.
+   *
+   * @method validateOptions
+   * @private
+   * @param  {Object} options The options object to be checked for validity.
+   */
 		value: function value(options) {
 			var _ = (0, _incognito2["default"])(this);
 
@@ -155,7 +167,9 @@ var HistoryService = (function () {
 		key: startProcessors,
 		value: function value() {
 			var queue = (0, _incognito2["default"])(this).queue;
-			queue.process("createEvent", require("./processors/processCreateEvent.js"));
+			queue.process("createEvent", function (event, done) {
+				done();
+			});
 		}
 	}, {
 		key: "queue",
@@ -167,12 +181,24 @@ var HistoryService = (function () {
    * Return the redis client in use
    *
    * @property redis
-   * @return {RedisClient} The redis client in use
+   * @return {*} The redis client in use
    */
 	}, {
 		key: "redis",
 		get: function get() {
 			return (0, _incognito2["default"])(this).redis;
+		}
+
+		/**
+   * Return the DynamoDB client in use
+   *
+   * @property dynamodb
+   * @return {*} The DynamoDB client in use
+   */
+	}, {
+		key: "dynamodb",
+		get: function get() {
+			return (0, _incognito2["default"])(this).dynamodb;
 		}
 	}]);
 

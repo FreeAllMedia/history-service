@@ -2,14 +2,14 @@ import HistoryService from "../../lib/";
 import Request from "appeal";
 import sinon from "sinon";
 import processCreateEvent from "../../lib/processors/processCreateEvent.js";
-import credentials from "../credentials.json";
+import options from "../options.json";
 
 describe(".listen(portNumber, callback)", () => {
 	let historyService,
 		portNumber = 8045;
 
 	beforeEach(done => {
-		historyService = new HistoryService({credentials: credentials});
+		historyService = new HistoryService(options);
 		historyService.queue.process = sinon.spy();
 		historyService.listen(portNumber, done);
 	});

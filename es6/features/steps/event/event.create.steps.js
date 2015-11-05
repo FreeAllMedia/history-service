@@ -1,7 +1,5 @@
 /* eslint-disable new-cap */
 
-import sinon from "sinon";
-
 import Request from "appeal";
 
 export default function EventControllerShowSteps () {

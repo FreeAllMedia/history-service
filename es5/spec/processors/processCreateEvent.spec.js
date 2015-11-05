@@ -25,5 +25,5 @@ describe(".processCreateEvent(job, callback)", function () {
         dynamodbServer.close(done);
     });
 
-    it("should save job data ", function () {});
+    it("should save job data ");
 });

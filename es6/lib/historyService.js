@@ -3,6 +3,7 @@ import privateData from "incognito";
 import kue from "kue";
 import Redis from "ioredis";
 import MultiError from "blunder";
+import dynamo from "dynamo-client";
 
 const 	validateOptions = Symbol(),
 		callExternalMethod = Symbol(),
@@ -25,7 +26,7 @@ export default class HistoryService {
 
 		_.redis = _.options.redis || new Redis(_.options.credentials.redis);
 		_.router = new EventRouter(this);
-		//_.dynamodb = dynamodb.createClient(_.options.credentials.dynamodb);
+		_.dynamodb = _.options.dynamodb || dynamo.createClient(_.options.credentials.dynamodb);
 
 		_.queue = kue.createQueue({
 			redis: {
@@ -72,12 +73,29 @@ export default class HistoryService {
 	 * Return the redis client in use
 	 *
 	 * @property redis
-	 * @return {RedisClient} The redis client in use
+	 * @return {*} The redis client in use
 	 */
 	get redis() {
 		return privateData(this).redis;
 	}
 
+	/**
+	 * Return the DynamoDB client in use
+	 *
+	 * @property dynamodb
+	 * @return {*} The DynamoDB client in use
+	 */
+	get dynamodb() {
+		return privateData(this).dynamodb;
+	}
+
+	/**
+	 * Validates that all options are set correctly.
+	 *
+	 * @method validateOptions
+	 * @private
+	 * @param  {Object} options The options object to be checked for validity.
+	 */
 	[validateOptions](options) {
 		const _ = privateData(this);
 
@@ -120,6 +138,8 @@ export default class HistoryService {
 	 */
 	[startProcessors]() {
 		const queue = privateData(this).queue;
-		queue.process("createEvent", require("./processors/processCreateEvent.js"));
+		queue.process("createEvent", function (event, done) {
+			done();
+		});
 	}
 }

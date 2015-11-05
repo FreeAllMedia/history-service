@@ -9,10 +9,6 @@ exports["default"] = EventControllerShowSteps;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _sinon = require("sinon");
-
-var _sinon2 = _interopRequireDefault(_sinon);
-
 var _appeal = require("appeal");
 
 var _appeal2 = _interopRequireDefault(_appeal);

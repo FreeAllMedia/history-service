@@ -16,7 +16,5 @@ describe(".processCreateEvent(job, callback)", () => {
         dynamodbServer.close(done);
     });
 
-    it("should save job data ", () => {
-
-    });
+    it("should save job data ");
 });

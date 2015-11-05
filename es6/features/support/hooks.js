@@ -2,6 +2,8 @@
 import HistoryService from "../../lib/";
 import mockRedis from "redis-js"; // Sounds like actual Redis client, but is actually a mock library
 
+import environments from "../../../environments.json";
+
 export default function hooks() {
 	/* Called before each scenario */
 	this.Before(function (event, callback) {
@@ -19,7 +21,8 @@ export default function hooks() {
 		this.mockRedisClient = mockRedis.createClient();
 
 		this.service = new HistoryService({
-			redis: this.mockRedisClient
+			redis: this.mockRedisClient,
+			dynamodb: {}
 		});
 
 		this.service.listen(portNumber, () => {

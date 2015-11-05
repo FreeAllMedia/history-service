@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = processCreateEvent;
 
 function processCreateEvent(job, done) {
-
     done();
 }
 

@@ -10,13 +10,13 @@ var _appeal = require("appeal");
 
 var _appeal2 = _interopRequireDefault(_appeal);
 
-var _credentialsJson = require("../credentials.json");
+var _optionsJson = require("../options.json");
 
-var _credentialsJson2 = _interopRequireDefault(_credentialsJson);
+var _optionsJson2 = _interopRequireDefault(_optionsJson);
 
 describe(".close(callback)", function () {
     it("should stop the server from listening for requests", function (done) {
-        var historyService = new _lib2["default"]({ credentials: _credentialsJson2["default"] });
+        var historyService = new _lib2["default"](_optionsJson2["default"]);
 
         historyService.listen(8045, function () {
             historyService.close(function () {

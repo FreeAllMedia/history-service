@@ -18,16 +18,16 @@ var _libProcessorsProcessCreateEventJs = require("../../lib/processors/processCr
 
 var _libProcessorsProcessCreateEventJs2 = _interopRequireDefault(_libProcessorsProcessCreateEventJs);
 
-var _credentialsJson = require("../credentials.json");
+var _optionsJson = require("../options.json");
 
-var _credentialsJson2 = _interopRequireDefault(_credentialsJson);
+var _optionsJson2 = _interopRequireDefault(_optionsJson);
 
 describe(".listen(portNumber, callback)", function () {
 	var historyService = undefined,
 	    portNumber = 8045;
 
 	beforeEach(function (done) {
-		historyService = new _lib2["default"]({ credentials: _credentialsJson2["default"] });
+		historyService = new _lib2["default"](_optionsJson2["default"]);
 		historyService.queue.process = _sinon2["default"].spy();
 		historyService.listen(portNumber, done);
 	});

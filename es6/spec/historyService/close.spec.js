@@ -1,10 +1,10 @@
 import HistoryService from "../../lib/";
 import Request from "appeal";
-import credentials from "../credentials.json";
+import options from "../options.json";
 
 describe(".close(callback)", () => {
 	it("should stop the server from listening for requests", done => {
-        const historyService = new HistoryService({credentials: credentials});
+        const historyService = new HistoryService(options);
 
         historyService.listen(8045, () => {
             historyService.close(() => {
